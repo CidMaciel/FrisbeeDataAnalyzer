@@ -1,0 +1,94 @@
+import java.util.*;
+
+public class FrisbeeStatsAnalyzer {
+    private final Map<String, StatList> playerStats;
+    private int totalGames;
+
+    public FrisbeeStatsAnalyzer(Map<String, StatList> playerStats) {
+        this.playerStats = playerStats;
+        this.totalGames = calculateTotalGames();
+
+
+    }
+
+    private int calculateTotalGames() {
+        int maxGame = 0;
+        for (StatList stats : playerStats.values()) {
+            // Assuming the last game in any player's list is the total
+            if (stats.getSize() > 0) {
+                GameStats lastGame = stats.getGamesInPeriod(0, Integer.MAX_VALUE).get(stats.getSize() - 1);
+                maxGame = Math.max(maxGame, lastGame.getGameNumber());
+            }
+        }
+        return maxGame;
+    }
+
+    double averagePlayerStat (String playerName, String statName) {
+        if (!playerStats.containsKey(playerName)) {
+            throw new IllegalArgumentException("Player not found: " + playerName);
+        }
+        return playerStats.get(playerName).averageStat(statName);
+    }
+
+    public Map<String, Double> calculateTeamTrends(String statName, int lastNGames) {
+        Map<String, Double> trends = new HashMap<>();
+        int startGame = Math.max(1, totalGames - lastNGames + 1);
+        
+        for (Map.Entry<String, StatList> entry : playerStats.entrySet()) {
+            List<GameStats> recentGames = entry.getValue().getGamesInPeriod(startGame, totalGames);
+            if (!recentGames.isEmpty()) {
+                double sum = 0.0;
+                for (GameStats game : recentGames) {
+                    sum += getStatValue(game, statName);
+                }
+                trends.put(entry.getKey(), sum / recentGames.size());
+            }
+        }
+        
+        return trends;
+    }
+
+    public Map<String, Integer> calculateAllPlusMinus() {
+        Map<String, Integer> plusMinusMap = new HashMap<>();
+        
+        for (Map.Entry<String, StatList> entry : playerStats.entrySet()) {
+            plusMinusMap.put(entry.getKey(), entry.getValue().calculateTotalPlusMinus());
+        }
+        
+        return plusMinusMap;
+    }
+
+    public List<String> getMostImpactfulPlayers(int minGames) {
+        List<PlayerImpact> impactList = new ArrayList<>();
+        
+        for (Map.Entry<String, StatList> entry : playerStats.entrySet()) {
+            if (entry.getValue().getSize() >= minGames) {
+                double impact = (double) entry.getValue().calculateTotalPlusMinus() / entry.getValue().getSize();
+                impactList.add(new PlayerImpact(entry.getKey(), impact));
+            }
+        }
+        
+        impactList.sort((a, b) -> Double.compare(b.getImpact(), a.getImpact()));
+        
+        List<String> result = new ArrayList<>();
+        for (PlayerImpact pi : impactList) {
+            result.add(pi.getName());
+        }
+        
+        return result;
+    }
+
+    private double getStatValue(GameStats game, String statName) {
+        switch (statName.toLowerCase()) {
+            case "completed throws": return game.getCompletedThrows();
+            case "uncompleted throws": return game.getUncompletedThrows();
+            case "catches": return game.getCatches();
+            case "drops": return game.getDrops();
+            case "forced ds": return game.getForcedDs();
+            case "plusminus": return game.getPlusMinus();
+            default: throw new IllegalArgumentException("Unknown stat: " + statName);
+        }
+    }
+
+
+}

@@ -8,6 +8,7 @@ import java.util.List;
 public class StatList {
     private StatNode head;
     private StatNode tail;
+    private StatNode prev;
     private int size;
     
     // Inner node class
@@ -38,9 +39,6 @@ public class StatList {
         return size;
     }
     
-    public GameStats getGame(int index) {
-
-    }
     public double averageStat(String statName) {
         if (size == 0) { return 0.0; }
 
@@ -74,9 +72,34 @@ public class StatList {
             }
         return total/size;
     }
-    public List<GameStats> getGamesInPeriod(LocalDate start, LocalDate end) {
+
+
+    public List<GameStats> getGamesInPeriod(int start, int end) {
         List<GameStats> result = new ArrayList<>();
         StatNode current = head;
+
+        while (current != null) {
+            if (current.stats.getGameNumber() >= start && 
+                current.stats.getGameNumber() <= end) {
+                result.add(current.stats);
+            }
+            current = current.next;
+        }
+
+        return result;
     }
-    public int size() { return size; }
+    
+    public int calculateTotalPlusMinus() {
+        int total = 0;
+        StatNode current = head;
+        
+        while (current != null) {
+            total += current.stats.getPlusMinus();
+            current = current.next;
+        }
+        
+        return total;
+    }
+
+
 }
