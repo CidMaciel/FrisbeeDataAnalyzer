@@ -13,6 +13,7 @@ public class UltimateFrisbeeStatsTracker {
     private Map<String, String> nameMapping; //allows us to access names regardless of case
     private List<String> players;
     private String opposingTeam;
+    private String dateOfGame;
     private int gameToScore;
     private boolean startingOnOffense;
     private boolean isOnOffense;
@@ -86,17 +87,7 @@ public class UltimateFrisbeeStatsTracker {
                 System.out.println("Final Score: Braineaters " + ourScore + " - " + theirScore + " " + opposingTeam);
             }
         }
-        
-        // Ask if the user wants to export to CSV; specific format to this CSV that allows it to be read and analyzed amongst stats from previous games
-        System.out.println("\nDo you want to export stats to CSV? 'Yes' to export, 'no' to terminate program");
-        String response = scanner.nextLine().trim().toLowerCase();
-        if (response.equals("yes")) {
-            exportStatsToCSV();
-        } else {
-            System.out.println("Sounds good, thank you for using the Ulitmate Frisbee Stats Tracker!");
-        }
     }
-
     private void enterPlayersForGame() {
         System.out.println("\nEnter the players for this game, separated by comma:");
         String input = scanner.nextLine();
@@ -175,13 +166,18 @@ public class UltimateFrisbeeStatsTracker {
     
 
     private void enterGameDetails() {
+
+        System.out.println("\nWhat is today's date? Please enter in M/D/Y form, ex. 09/20/2004:");
+        dateOfGame = scanner.nextLine().trim();
+
         System.out.println("\nEnter the name of the opposing team:");
         opposingTeam = scanner.nextLine().trim();
         
         System.out.println("\nGame to 13 or 15?");
         String scoreInput = scanner.nextLine().trim();
         
-    
+
+        
         gameToScore = Integer.parseInt(scoreInput);
         if (gameToScore != 13 && gameToScore != 15) {
             System.out.println("Error: Game score must be either 13 or 15. Please try again");
@@ -266,7 +262,7 @@ public class UltimateFrisbeeStatsTracker {
         
         // prompt for us as we lead into the next point; allows for continuation to next point, altering of stats from current point, or indicating that game is over early
         boolean readyForNextPoint = false;
-        while (!readyForNextPoint) {
+        while (!readyForNextPoint || !isGameOver) {
             System.out.println("\nEnter 1 if ready for next point; enter 2 if need to alter this point; enter 'game over' if the game is over.");
             String choice = scanner.nextLine().trim();
 
@@ -293,7 +289,7 @@ public class UltimateFrisbeeStatsTracker {
             if (response.equals("yes")) {
                 exportStatsToCSV();
             } else {
-                System.out.println("Sounds good, thank you for using the Ulitmate Frisbee Stats Tracker!");
+                System.out.println("\nSounds good, thank you for using the Ulitmate Frisbee Stats Tracker!");
             }
             }
         }
@@ -751,11 +747,11 @@ public class UltimateFrisbeeStatsTracker {
 
     private void exportStatsToCSV() {
         try {
-            String filename = "Rook_Snooze_Full_Data.csv";
+            String filename = "Braineatersvs" + opposingTeam + "_" + dateOfGame + ".csv";
             FileWriter fileWriterStatsToCSV = new FileWriter(filename);
 
             //title line which designates the categories of recorded data
-            fileWriterStatsToCSV.append("Point in Game by Player,\"Started on offense/defense (O = 1, D = 0)\",# of Uncompleted Throws,# of Completed Throws,# of Catches,# of Drops (hits body but not completed catch) ,# of Forced Ds (stalled out opponent or block),\"Line won (T = 1, F = 0)\"\n");
+            fileWriterStatsToCSV.append("Point in Game by Player,\"Started on offense/defense (O = 1, D = 0)\",# of Uncompleted Throws,# of Completed Throws,# of Catches,# of Drops (hits body but not completed catch) ,# of Forced Ds (stalled out opponent or block), # of Assists, # of Scores,\"Line won (T = 1, F = 0)\"\n");
 
             //for each point in the game, retrieve pointWon, startedOnOffense, players, and stats
             for (int pointIndex = 0; pointIndex < pointResults.size(); pointIndex++) {
@@ -766,7 +762,7 @@ public class UltimateFrisbeeStatsTracker {
             
             //write which point it is and if we won the point in the left and rightmost columns, respectively
             fileWriterStatsToCSV.append(String.valueOf(pointIndex + 1));
-            fileWriterStatsToCSV.append(",,,,,,," + (pointWon ? "1" : "0") + "\n");
+            fileWriterStatsToCSV.append(",,,,,,,,," + (pointWon ? "1" : "0") + "\n");
             
             // Write player rows for this point
             for (String player : lineup) {
@@ -787,6 +783,8 @@ public class UltimateFrisbeeStatsTracker {
                 fileWriterStatsToCSV.append((stats.getOrDefault('c', 0) + stats.getOrDefault('s', 0)) + ",");
                 fileWriterStatsToCSV.append(stats.getOrDefault('d', 0) + ",");
                 fileWriterStatsToCSV.append(stats.getOrDefault('f', 0) + ",");
+                fileWriterStatsToCSV.append(stats.getOrDefault('a', 0) + ",");
+                fileWriterStatsToCSV.append(stats.getOrDefault('s', 0) + ",");
                 fileWriterStatsToCSV.append((pointWon ? "1" : "0") + "\n");
             }
         }
