@@ -1,6 +1,12 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class UltimateFrisbeeStatsTracker {
+    private List<List<String>> pointLineups = new ArrayList<>();
+    private List<Map<String, Map<Character, Integer>>> pointPlayerStats = new ArrayList<>(); 
+    private List<Boolean> pointResults = new ArrayList<>(); 
+    private List<Boolean> pointStartedOnOffense = new ArrayList<>();       
     private Scanner scanner;
     private HashMap<String, DoublyLinkedList> playerStats;
     private Map<String, Integer> teamStats;
@@ -213,8 +219,14 @@ public class UltimateFrisbeeStatsTracker {
             pointPosition = "defense";
         }
         System.out.println("We are on " + pointPosition);
+
+        //track if on offense or defense for csv export
+        pointStartedOnOffense.add(isOnOffense);
         
         getLineForPoint();
+
+        //deep copy array list of lineup for the point for csv export
+        pointLineups.add(new ArrayList<>(currentLine));
         
         boolean pointEnded = false;
         //while the point isnt over, user can input player-action codes, point won, point lost, or sub)
@@ -228,6 +240,9 @@ public class UltimateFrisbeeStatsTracker {
                 isOnOffense = false;
                 pointEnded = true;
                 processPointActions();
+                //store won point and stats for csv export
+                pointResults.add(true);
+                storePointStats();
                 
             //if we lose the point, add one to their score,  prepare to be on offense, end point, and update player and team stats
             } else if (input.equalsIgnoreCase("point lost")){
@@ -235,6 +250,9 @@ public class UltimateFrisbeeStatsTracker {
                 isOnOffense = true;
                 pointEnded = true;
                 processPointActions();  
+                //store lost point and stats for csv export
+                pointResults.add(false);
+                storePointStats();
                 
             //if sub, make substitution
             } else if (input.equalsIgnoreCase("sub")) {
@@ -251,12 +269,17 @@ public class UltimateFrisbeeStatsTracker {
         while (!readyForNextPoint) {
             System.out.println("\nEnter 1 if ready for next point; enter 2 if need to alter this point; enter 'game over' if the game is over.");
             String choice = scanner.nextLine().trim();
+
             //if 1, we are ready for next point and while loop breaks
             if (choice.equals("1")) {
                 readyForNextPoint = true;
+
             //if 2, alter point actions as determined by user in alterPointActions method
             } else if (choice.equals("2")) {
                 alterPointActions();
+                //update stored stats for points after altered actions
+                updatePointStats(pointPlayerStats.size()-1); 
+
             //if game over, game is over and display final stats, players stats and rankings
             } else if (choice.equalsIgnoreCase("game over")){
                 isGameOver = true;
@@ -275,6 +298,63 @@ public class UltimateFrisbeeStatsTracker {
             }
         }
     }   
+
+    private void storePointStats() {
+        Map<String, Map<Character, Integer>> playerPointStats = new HashMap<>();
+        //find player actions from this point to store in playerPointStats map
+        for (int i = 0; i < currentPointActions.size(); i++) {
+            String player = currentPointPlayers.get(i);
+            char actionType = currentPointStatTypes.get(i).charAt(0);
+            
+            //if the player doesn't exist yet start a new hashmap for them in playerPointStats
+            if (!playerPointStats.containsKey(player)) {
+                playerPointStats.put(player, new HashMap<>());
+                for (char c : new char[]{'c', 'd', 't', 'u', 'f', 'a', 's'}) {
+                    playerPointStats.get(player).put(c, 0);
+                }
+            }
+            //increment given stat 
+            Map<Character, Integer> stats = playerPointStats.get(player);
+            stats.put(actionType, stats.get(actionType) + 1);
+    }
+    //if a player has nothing happen for them in a line, add them with 0 at all values
+    for (String player : currentLine) {
+        if (!playerPointStats.containsKey(player)) {
+            playerPointStats.put(player, new HashMap<>());
+            for (char c : new char[]{'c', 'd', 't', 'u', 'f', 'a', 's'}) {
+                playerPointStats.get(player).put(c, 0);
+            }
+        }
+    }
+    //store stats from this point in the larger pointPlayerStats
+    pointPlayerStats.add(playerPointStats);
+    }
+    
+    private void updatePointStats(int pointIndex){
+        //if pointIndex in bounds, update temporary updatedStats hashmap 
+        if (pointIndex >= 0 && pointIndex < pointPlayerStats.size()) {
+            Map<String, Map<Character, Integer>> updatedStats = new HashMap<>();
+        
+        //populate updatedStats with players and initialized stats of 0
+        for (String player : pointLineups.get(pointIndex)) {
+            updatedStats.put(player, new HashMap<>());
+            for (char c : new char[]{'c', 'd', 't', 'u', 'f', 'a', 's'}) {
+                updatedStats.get(player).put(c, 0);
+            }
+        }
+
+        //populate updatedStats with actual stats from point
+        for (int i = 0; i < currentPointActions.size(); i++) {
+            String player = currentPointPlayers.get(i);
+            char actionType = currentPointStatTypes.get(i).charAt(0);
+            Map<Character, Integer> stats = updatedStats.get(player);
+            stats.put(actionType, stats.get(actionType) + 1);
+        }
+        
+        //update stored stats for this point
+        pointPlayerStats.set(pointIndex, updatedStats);
+        }
+    }
 
     private void getLineForPoint() {
         System.out.println("Enter the players on this line, separated by comma:");
@@ -670,8 +750,60 @@ public class UltimateFrisbeeStatsTracker {
     }
 
     private void exportStatsToCSV() {
-       System.out.println("Emmett add this feature once you're done with most of the user interface and during game stat collection");
+        try {
+            String filename = "Rook_Snooze_Full_Data.csv";
+            FileWriter fileWriterStatsToCSV = new FileWriter(filename);
+
+            //title line which designates the categories of recorded data
+            fileWriterStatsToCSV.append("Point in Game by Player,\"Started on offense/defense (O = 1, D = 0)\",# of Uncompleted Throws,# of Completed Throws,# of Catches,# of Drops (hits body but not completed catch) ,# of Forced Ds (stalled out opponent or block),\"Line won (T = 1, F = 0)\"\n");
+
+            //for each point in the game, retrieve pointWon, startedOnOffense, players, and stats
+            for (int pointIndex = 0; pointIndex < pointResults.size(); pointIndex++) {
+            boolean pointWon = pointResults.get(pointIndex);
+            boolean startedOnOffense = pointStartedOnOffense.get(pointIndex);
+            List<String> lineup = pointLineups.get(pointIndex);
+            Map<String, Map<Character, Integer>> pointStats = pointPlayerStats.get(pointIndex);
+            
+            //write which point it is and if we won the point in the left and rightmost columns, respectively
+            fileWriterStatsToCSV.append(String.valueOf(pointIndex + 1));
+            fileWriterStatsToCSV.append(",,,,,,," + (pointWon ? "1" : "0") + "\n");
+            
+            // Write player rows for this point
+            for (String player : lineup) {
+                Map<Character, Integer> stats = pointStats.get(player);
+                
+                if (stats == null) {
+                    // If no stats for this player (should not happen), use empty stats
+                    stats = new HashMap<>();
+                    for (char c : new char[]{'c', 'd', 't', 'u', 'f', 'a', 's'}) {
+                        stats.put(c, 0);
+                    }
+                }
+                //add each player's stat across the row for their point
+                fileWriterStatsToCSV.append(nameMapping.get(player) + ",");
+                fileWriterStatsToCSV.append(startedOnOffense ? "1," : "0,");
+                fileWriterStatsToCSV.append(stats.getOrDefault('u', 0) + ",");
+                fileWriterStatsToCSV.append((stats.getOrDefault('t', 0) + stats.getOrDefault('a', 0)) + ",");
+                fileWriterStatsToCSV.append((stats.getOrDefault('c', 0) + stats.getOrDefault('s', 0)) + ",");
+                fileWriterStatsToCSV.append(stats.getOrDefault('d', 0) + ",");
+                fileWriterStatsToCSV.append(stats.getOrDefault('f', 0) + ",");
+                fileWriterStatsToCSV.append((pointWon ? "1" : "0") + "\n");
+            }
+        }
+        
+        // Add one blank row at the end
+        fileWriterStatsToCSV.append(",,,,,,,\n");
+        
+        fileWriterStatsToCSV.close();
+        
+        System.out.println("Stats exported successfully to " + filename);
+        
+    } catch (IOException e) {
+        System.out.println("Error exporting stats: " + e.getMessage());
     }
+}
+        
+            
 
     public static void main(String[] args) {
         UltimateFrisbeeStatsTracker tracker = new UltimateFrisbeeStatsTracker();

@@ -1,0 +1,10 @@
+Point in Game by Player,"Started on offense/defense (O = 1, D = 0)",# of Uncompleted Throws,# of Completed Throws,# of Catches,# of Drops (hits body but not completed catch) ,# of Forced Ds (stalled out opponent or block),"Line won (T = 1, F = 0)"
+1,,,,,,,1
+Rook,0,0,0,1,0,0,1
+Choppa,0,0,0,0,0,0,1
+Snooze,0,0,1,0,0,0,1
+Jimmy,0,0,0,0,0,0,1
+Chooch,0,0,0,0,0,0,1
+Red,0,0,0,0,0,0,1
+Exxpo,0,0,0,0,0,0,1
+,,,,,,,
