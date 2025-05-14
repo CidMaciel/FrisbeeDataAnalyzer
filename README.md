@@ -3,7 +3,14 @@ Welcome to FrisbeeDataAnalyzer, a data analyzer for ultimate frisbee teams! With
 
 ## One-Paragraph Description
 
-FrisbeeDataAnalyzer is meant to be used to caclulate many different aspects about a team's performance. When you run main, you will be asked to input a csv file name, and choose what stats you want to be calculated. After you have chosen your inputs, the program will calculate five items: the average team stat of the user's choice, team trends in a specified period, the most impactful players, and the suggested new line. 
+FrisbeeDataAnalyzer is meant to be used to caclulate many different aspects about a team's performance. When you run main, you will be asked to input a csv file name, and choose what stats you want to be calculated. After you have chosen your inputs, the program will calculate five items: the average team stat of the user's choice, team trends in a specified period, the most impactful players, and the suggested new line. You can choose which operation you would like to use, and what you would like to view. Here is an example of the program running:
+
+<img width="304" alt="Screenshot 2025-05-14 at 10 46 57 AM" src="https://github.com/user-attachments/assets/d696faaa-6896-48d2-96c6-d845ae9a4fa1" />
+
+And here is the result when you select 1 and choose drops:
+
+<img width="653" alt="Screenshot 2025-05-14 at 10 48 57 AM" src="https://github.com/user-attachments/assets/3c764a1b-045c-43cf-baea-45329b54e287" />
+
 
 ## Usage
 
