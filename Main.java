@@ -77,7 +77,7 @@ public class Main {
         System.out.print("Enter number of recent games to consider (max 2): ");
         int games = getIntInput(1, analyzer.getTotalGames());
         
-        System.out.println("\nResults (last " + games + " games):");
+        System.out.println("\nResults (last 2 games):");
         Map<String, Double> trends = analyzer.calculateTeamTrends(stat, games);
         trends.forEach((player, avg) -> System.out.printf("%s: %.2f %s%n", player, avg, stat));
     }

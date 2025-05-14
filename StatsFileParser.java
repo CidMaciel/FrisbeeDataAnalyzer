@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @Author Cid Maciel and Emmett Levine
+ */
 public class StatsFileParser {
     public static Map<String, StatList> parseFile(String filePath) throws IOException {
         Map<String, StatList> playerStats = new HashMap<>();
@@ -11,7 +14,7 @@ public class StatsFileParser {
         int currentPoint = 0;
         
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            // Skip the header row
+            // skip the header row
             br.readLine();
             br.readLine();
             
@@ -19,13 +22,13 @@ public class StatsFileParser {
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
                 
-                // Check if this is a game header line (e.g., "1,,,,,,,")
+                // check if this is a game header line (e.g., "1,,,,,,,")
                 if (values[0].trim().equals("**Game 1**")) {
                     currentGame = Integer.parseInt(values[0].trim());
                     continue;
                 }
 
-                // Check if this is a point header line (e.g., "1,1,,,,,,,0")
+                // check if this is a point header line (e.g., "1,1,,,,,,,0")
                 if (values[1].matches("\\d+") && values[2].trim().isEmpty()) {
                     currentPoint = Integer.parseInt(values[1].trim());
                     continue;
@@ -62,6 +65,13 @@ public class StatsFileParser {
         return playerStats;
     }
     
+    /**
+     * makes sure that an int is checked
+     * 
+     * @param value value to be parsed
+     * @param defaultValue integer value
+     * @return default value
+     */
     private static int parseIntWithDefault(String value, int defaultValue) {
         try {
             return value.trim().isEmpty() ? defaultValue : Integer.parseInt(value.trim());

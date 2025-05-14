@@ -1,14 +1,14 @@
-import java.time.LocalDate;
+
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 /**
  * Custom doubly linked list to store player stats for each game
+ * @author Cid Maciel and Emmett Levine
  */
 public class StatList {
     private StatNode head;
-    private StatNode tail;
     private StatNode prev;
+    private StatNode tail;
     private int size;
     
     // Inner node class
@@ -59,6 +59,7 @@ public class StatList {
         double total = 0.0;
         StatNode current = head;
 
+        // goes through all stats and checks if the input matches
         while (current != null) {
             switch (statName.toLowerCase()) {
                 case "completed throws" :
@@ -108,10 +109,16 @@ public class StatList {
         return result;
     }
     
+    /**
+     * calculates the stats of all players and their plus minus
+     * 
+     * @return players plus minus
+     */
     public int calculateTotalPlusMinus() {
         int total = 0;
         StatNode current = head;
         
+        // iterates through the stats
         while (current != null) {
             total += current.stats.getPlusMinus();
             current = current.next;

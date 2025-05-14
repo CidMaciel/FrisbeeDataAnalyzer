@@ -1,3 +1,8 @@
+
+/** 
+ * class that represents the stata from each game for each player
+ * @Author Cid Maciel and Emmett Levine
+ */
 public class GameStats {
     private final String playerName;
     private final int gameNumber;
