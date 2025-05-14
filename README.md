@@ -16,6 +16,10 @@ And here is the result when you select 1 and choose drops:
 
 There are several methods within the FrisbeeDataAnalyzer project. I will begin by going over GameStats, the class in which we store the stats for each individual player
 
+# Main class
+
+### The main class is where all code should be run. If you run the main class, this will show you the options for analyzing each player and stat
+
 # GameStats class
 
 The GameStats class is a part of the map used in FrisbeeStatsAnalyzer, and holds the stats for each player. I will go over each method and what they do.
