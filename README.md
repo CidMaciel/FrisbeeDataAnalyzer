@@ -1,6 +1,9 @@
 # FrisbeeDataAnalyzer
 Welcome to FrisbeeDataAnalyzer, a data analyzer for ultimate frisbee teams! With this program, you can input live stats as well as read from a csv of stats to recieve a large amont of information such as the most impactful players, player plus-minus, overall team trends, and even suggesting new lines.
 
+## One-Paragraph Description
+
+FrisbeeDataAnalyzer is meant to be used to caclulate many different aspects about a team's performance. When you run main, you will be asked to input a csv file name, and choose what stats you want to be calculated. After you have chosen your inputs, the program will calculate five items: the average team stat of the user's choice, team trends in a specified period, the most impactful players, and the suggested new line. 
 
 ## Usage
 
@@ -40,7 +43,7 @@ StatList playerStats = new StatList();
 
 ## StatNode inner class
 
-the inner class StatNode represents the nodes within the list and contains a constructor that makes a new StatNode that is then added to the StatList.
+The inner class StatNode represents the nodes within the list and contains a constructor that makes a new StatNode that is then added to the StatList.
 
 ## getSize method
 
@@ -48,7 +51,7 @@ The getSize method returns the total number of games in the list. It returns an 
 
 ## addGame method
 
-the addGame method takes one input, being a GameStats stat. It creates a new StatNode within the StatList and adds the game.
+The addGame method takes one input, being a GameStats stat. It creates a new StatNode within the StatList and adds the game.
 
 ### Example Usage:
 
@@ -62,7 +65,7 @@ This method takes one input, which is the average stat you want to find. It then
 
 double avgCatches = playerStats.averageStat("catches");
 
-## getGamesInPeriod
+## getGamesInPeriod method
 
 This method takes two inputs, a start int, and an end int. These represent the first and last game in the period you want to search. It returns all games within that period.
 
@@ -70,7 +73,7 @@ This method takes two inputs, a start int, and an end int. These represent the f
 
 List<GameStats> earlyGames = playerStats.getGamesInPeriod(1, 3);
 
-## calculateTotalPlusMinus
+## calculateTotalPlusMinus method
 
 This method is similar to the calculation of plus minus, except it calculates the plus minus for the entire team. It takes no inputs, and returns an int equal to the total plus minus.
 
@@ -90,10 +93,130 @@ double avgThrows = playerCareer.averageStat("completed throws");
 List<GameStats> game2Stats = playerCareer.getGamesInPeriod(2, 2);
 int careerImpact = playerCareer.calculateTotalPlusMinus();
 
-# FrisbeeStatsAnalyzer constructor
+# FrisbeeStatsAnalyzer class
 
-Tje FrisbeeStatsAnalyzer constructor takes one input of a map of type <String, StatList
+The FrisbeeStatsAnalyzer class is what holds most of the methods that are meant to display the four functions we described in part 1. This class allows us to run each method in the Main class which compiles all of the methods included in this class. It uses a map to store the data that is inputted.
 
-# calculateTotalGames
+## FrisbeeStatsAnalyzer constructor
 
-the calculateTotalGames takes no parameters. It is used to find the total games that were played in the time of the data.
+The FrisbeeStatsAnalyzer constructor takes one input of a map of type <String, StatList>. It then initializes the playerStats list, and calculates the total games.
+
+## calculateTotalGames method
+
+the calculateTotalGames takes no parameters. It is used to find the total games that were played in the time of the data. It calculates the total number of games by running through the list and tracking the games.
+
+## averagePlayerStat method
+
+The averagePlayerStat method takes two inputs: the name of a player and a stat that you want to average. It simply checks the player that is specified and returns an int of their stat.
+
+### Example Usage:
+
+for (String player : analyzer.getPlayerStats().keySet()) {
+      double avg = analyzer.averagePlayerStat(player, stat);
+      System.out.printf("%s: %.2f %s%n", player, avg, stat);
+}
+
+## calculateTeamTrends method
+
+This method takes two inputs: a stat name, and an amount of games (max 2 for better tracking). It then tracks the average stat for all players within these one or two games to analyze the team trends and how we are doing generally as a team. This is the output of the method.
+
+### Example Usage:
+
+Map<String, Double> trends = analyzer.calculateTeamTrends(stat, games);
+trends.forEach((player, avg) -> System.out.printf("%s: %.2f %s%n", player, avg, stat));
+
+## calculateAllPlusMinus method
+
+This method is similar to the calculation of plus minus, except it calculates the plus minus for the entire team. It takes no inputs, and returns an int equal to the total plus minus. We needed to include a method for this in this class as well for it to work.
+
+### Example Usage:
+
+ private static void viewPlusMinus(FrisbeeStatsAnalyzer analyzer) {
+        System.out.println("\n=== Player Plus-Minus Ratings ===");
+        Map<String, Integer> plusMinus = analyzer.calculateAllPlusMinus();
+        plusMinus.forEach((player, pm) -> System.out.printf("%s: %+d%n", player, pm));
+    }
+
+## getMostImpactfulPlayers method
+
+This method takes one parameter, which is the minimum amount of games the impactful players had to play in. It then makes a list of the most impactful players using calculateTotalPlusMinus as a helper function. It outputs a list of the most impactful players in order.
+
+### Example Usage:
+
+private static void findImpactfulPlayers(FrisbeeStatsAnalyzer analyzer) {
+        System.out.println("\n=== Most Impactful Players ===");
+        System.out.print("Enter minimum games played: ");
+        int minGames = getIntInput(1, analyzer.getTotalGames());
+        
+        System.out.println("\nResults (min " + minGames + " games):");
+        List<String> players = analyzer.getMostImpactfulPlayers(minGames);
+        players.forEach(System.out::println);
+    }
+
+## recommendLines method
+
+This method takes one input, an integer of the number of players that should be recommended for each line. It then access playerstats and uses a calculation combining plus-minus, catches, drops, and forced ds. After analyzation, it returns a Map of type <String, List<String>> that contains the new suggested offensive/defensive lines.
+
+### Example Usage:
+
+private static void suggestNewLine(FrisbeeStatsAnalyzer analyzer) {
+        System.out.println("\n=== New Suggested O and D Lines  ===");
+        Map<String, List<String>> playerList = analyzer.recommendLines(7);
+        System.out.println(playerList);
+    }
+
+## rankPlayers method
+
+This method is used as a helper function for getting the most impactful players. It takes a List of player names and a to double function of scorers as input, and returns a sorted list of the players ranked.
+
+### Example Usage:
+
+List<String> offenseRank = rankPlayers(players, 
+            p -> playerStats.get(p).averageStat("completed throws") * 0.5 +
+             playerStats.get(p).averageStat("catches") * 0.3 +
+             playerStats.get(p).averageStat("plusminus") * 0.2 -
+             playerStats.get(p).averageStat("drops") * 0.2);
+
+## getStatValue method
+
+Very simple method, takes a GameStats game and a stat and simply returns the value associated to the selected stat. 
+
+### Example Usage:
+
+for (GameStats game : recentGames) {
+      try {
+          sum += getStatValue(game, statName);
+              count++;
+          } catch (IllegalArgumentException e) {
+              System.err.println("Invalid stat for " + entry.getKey() + ": " + e.getMessage());
+          }
+      }
+}
+
+# StatsFileParser class
+
+The StatsFileParser class has one task which is operates, which is to convert the information from the CSV into GameStats objects. 
+
+## parseFile method
+
+The parseFile method takes one input, a file path to whatever CSV is going to be operated on. It returns the playerstats all compiled together.
+
+### Example Usage:
+
+System.out.println("Loading player stats data...");
+            Map<String, StatList> playerStats = StatsFileParser.parseFile("data/Rook_Snooze_Full_Data.csv");
+            FrisbeeStatsAnalyzer analyzer = new FrisbeeStatsAnalyzer(playerStats);
+
+## parseWithDefault method
+
+This method simply transmits a String integer value into an actual integer, and takes a String value and int defaultvalue. This ensures that Integers are actually integers.
+
+### Example Usage:
+
+if (values[0].trim().equals("**Game 1**")) {
+                    currentGame = Integer.parseInt(values[0].trim());
+                    continue;
+                }
+
+
+
