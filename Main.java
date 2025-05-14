@@ -22,9 +22,10 @@ public class Main {
                 System.out.println("1. View player averages");
                 System.out.println("2. Analyze team trends");
                 System.out.println("3. View plus-minus ratings");
-                System.out.println("4. Find most impactful players");
-                System.out.println("5. Exit");
-                System.out.print("Select an option (1-5): ");
+                System.out.println("4. Suggest a new line");
+                System.out.println("5. Find most impactful players");
+                System.out.println("6. Exit");
+                System.out.print("Select an option (1-6): ");
                 
                 int choice = getIntInput(1, 5);
                 
@@ -39,9 +40,12 @@ public class Main {
                         viewPlusMinus(analyzer);
                         break;
                     case 4:
-                        findImpactfulPlayers(analyzer);
+                        suggestNewLine(analyzer);
                         break;
                     case 5:
+                        findImpactfulPlayers(analyzer);
+                        break;
+                    case 6:
                         System.out.println("Exiting program...");
                         return;
                 }
@@ -53,7 +57,7 @@ public class Main {
     
     private static void analyzePlayerAverages(FrisbeeStatsAnalyzer analyzer) {
         System.out.println("\n=== Player Averages ===");
-        System.out.println("Available stats: completed throws, uncompleted throws, catches, drops, forced ds, plusminus, assist, score");
+        System.out.println("Available stats: completed throws, uncompleted throws, catches, drops, forced ds, plusminus");
         System.out.print("Enter stat to analyze: ");
         String stat = scanner.nextLine().toLowerCase();
         
@@ -66,11 +70,11 @@ public class Main {
     
     private static void analyzeTeamTrends(FrisbeeStatsAnalyzer analyzer) {
         System.out.println("\n=== Team Trends ===");
-        System.out.println("Available stats: completed throws, uncompleted throws, catches, drops, forced ds, plusminus, assist, score");
+        System.out.println("Available stats: completed throws, uncompleted throws, catches, drops, forced ds, plusminus");
         System.out.print("Enter stat to analyze: ");
         String stat = scanner.nextLine().toLowerCase();
         
-        System.out.print("Enter number of recent games to consider: ");
+        System.out.print("Enter number of recent games to consider (max 2): ");
         int games = getIntInput(1, analyzer.getTotalGames());
         
         System.out.println("\nResults (last " + games + " games):");
@@ -82,6 +86,12 @@ public class Main {
         System.out.println("\n=== Player Plus-Minus Ratings ===");
         Map<String, Integer> plusMinus = analyzer.calculateAllPlusMinus();
         plusMinus.forEach((player, pm) -> System.out.printf("%s: %+d%n", player, pm));
+    }
+
+    private static void suggestNewLine(FrisbeeStatsAnalyzer analyzer) {
+        System.out.println("\n=== New Suggested O and D Lines  ===");
+        Map<String, List<String>> playerList = analyzer.recommendLines(7);
+        System.out.println(playerList);
     }
     
     private static void findImpactfulPlayers(FrisbeeStatsAnalyzer analyzer) {

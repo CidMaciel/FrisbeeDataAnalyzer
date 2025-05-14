@@ -1,4 +1,6 @@
 import java.util.*;
+import java.util.function.ToDoubleFunction;
+import java.util.stream.Collectors;
 
 public class FrisbeeStatsAnalyzer {
     private final Map<String, StatList> playerStats;
@@ -108,6 +110,52 @@ public class FrisbeeStatsAnalyzer {
         }
         
         return result;
+    }
+
+    /**
+    * Recommends optimal offensive and defensive lines based on available stats
+    * @param playersPerLine Number of players needed per line (typically 7)
+    * @return Map containing "Offensive Line" and "Defensive Line" lists
+    */
+    public Map<String, List<String>> recommendLines(int playersPerLine) {
+        Map<String, List<String>> lines = new HashMap<>();
+    
+        // Get all qualified players (minimum 3 games)
+        List<String> players = playerStats.keySet().stream()
+            .filter(p -> playerStats.get(p).getSize() >= 3)
+            .collect(Collectors.toList());
+    
+        if (players.isEmpty()) return lines;
+    
+        // Offensive score weights: 50% completions, 30% catches, 20% plus-minus
+        List<String> offenseRank = rankPlayers(players, 
+            p -> playerStats.get(p).averageStat("completed throws") * 0.5 +
+             playerStats.get(p).averageStat("catches") * 0.3 +
+             playerStats.get(p).averageStat("plusminus") * 0.2 -
+             playerStats.get(p).averageStat("drops") * 0.2);
+    
+        // Defensive score weights: 60% forced Ds, 40% plus-minus
+        List<String> defenseRank = rankPlayers(players, 
+        p -> playerStats.get(p).averageStat("forced ds") * 0.6 +
+             playerStats.get(p).averageStat("plusminus") * 0.4);
+    
+        // Build lines ensuring no player is on both
+        lines.put("Offensive Line", offenseRank.stream()
+        .limit(playersPerLine)
+        .collect(Collectors.toList()));
+    
+        lines.put("Defensive Line", defenseRank.stream()
+        .filter(p -> !lines.get("Offensive Line").contains(p))
+        .limit(playersPerLine)
+        .collect(Collectors.toList()));
+    
+        return lines;
+    }
+
+    private List<String> rankPlayers(List<String> players, ToDoubleFunction<String> scorer) {
+        return players.stream()
+        .sorted(Comparator.comparingDouble(scorer).reversed())
+        .collect(Collectors.toList());
     }
 
     private double getStatValue(GameStats game, String statName) {
