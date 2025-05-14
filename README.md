@@ -26,6 +26,69 @@ calculatePlusMinus takes no inputs. It is called within each player, and calcula
 
 If you were to call this method on Rook's object that I mentioned in the example for the constructor, the method would return (2 + 1 + 2 - 0 - 0 = 5). This would be the resulting plus-minus for Rook.
 
+## Getters
+
+I thought I would include the getters here, as there are a lot. The getter functions all return the values they are associated with, such as a player's catches or forced ds.
+
+# StatList class
+
+The StatList class is a custom class that I created to store data for each player. It uses an ArrayList, and each node of the list is a GameStats stat. This class is meant to create a list of the stats for each player. I created my own linked list structure.
+
+### Example Usage:
+
+StatList playerStats = new StatList();
+
+## StatNode inner class
+
+the inner class StatNode represents the nodes within the list and contains a constructor that makes a new StatNode that is then added to the StatList.
+
+## getSize method
+
+The getSize method returns the total number of games in the list. It returns an int, the number of stored games within the list.
+
+## addGame method
+
+the addGame method takes one input, being a GameStats stat. It creates a new StatNode within the StatList and adds the game.
+
+### Example Usage:
+
+playerStats.addGame(new GameStats("Rook", 1, 3, true, 0, 5, 3, 1, 2, true));
+
+## averageStat method
+
+This method takes one input, which is the average stat you want to find. It then searches through the StatList for each stat that matches, and adds them to the double value that is returned. It also throws an error if an unsupported stat name is inputted
+
+### Example Usage:
+
+double avgCatches = playerStats.averageStat("catches");
+
+## getGamesInPeriod
+
+This method takes two inputs, a start int, and an end int. These represent the first and last game in the period you want to search. It returns all games within that period.
+
+### Example Usage:
+
+List<GameStats> earlyGames = playerStats.getGamesInPeriod(1, 3);
+
+## calculateTotalPlusMinus
+
+This method is similar to the calculation of plus minus, except it calculates the plus minus for the entire team. It takes no inputs, and returns an int equal to the total plus minus.
+
+### Example Usage:
+
+int totalImpact = playerStats.calculateTotalPlusMinus();
+
+## Example Usage of Class
+
+StatList playerCareer = new StatList();
+playerCareer.addGame(new GameStats("Rook", 1, 1, true, 0, 5, 3, 1, 2, true));
+playerCareer.addGame(new GameStats("Rook", 2, 3, false, 2, 3, 1, 0, 1, false));
+
+// Perform analysis
+int totalGames = playerCareer.getSize();
+double avgThrows = playerCareer.averageStat("completed throws");
+List<GameStats> game2Stats = playerCareer.getGamesInPeriod(2, 2);
+int careerImpact = playerCareer.calculateTotalPlusMinus();
 
 # FrisbeeStatsAnalyzer constructor
 
