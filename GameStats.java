@@ -10,7 +10,22 @@ public class GameStats {
     private final int forcedDs;
     private final boolean lineWon;
     private final int plusMinus;
+    
 
+    /**
+     * constructor for GameStats, takes each stat and a name as input and creates a GameStat
+     * 
+     * @param playerName 
+     * @param gameNumber
+     * @param pointInGame
+     * @param startedOnOffense
+     * @param uncompletedThrows
+     * @param completedThrows
+     * @param catches
+     * @param drops
+     * @param forcedDs
+     * @param lineWon
+     */
     public GameStats(String playerName, int gameNumber, int pointInGame, boolean startedOnOffense,
     int uncompletedThrows, int completedThrows, int catches, int drops, int forcedDs, boolean lineWon) {
         this.playerName = playerName;
@@ -27,10 +42,16 @@ public class GameStats {
 
     }
 
+    /**
+     * returns the calculation of a player's plus minus
+     * 
+     * @return an int equal to the player's plus minus
+     */
     private int calculatePlusMinus() {
         return completedThrows + catches + forcedDs - uncompletedThrows - drops;
     }
 
+    // getters for GameStats
     public String getPlayerName() {return playerName;}
     public int getGameNumber() {return gameNumber;}
     public int getPointInGame() {return pointInGame;}

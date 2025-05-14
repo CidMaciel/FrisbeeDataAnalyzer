@@ -22,7 +22,11 @@ public class StatList {
         }
     }
     
-    // Public API methods
+    /**
+     * adds a new GameStats game to the StatList
+     * 
+     * @param stats the stats to be added
+     */
     public void addGame(GameStats stats) {
         StatNode newNode= new StatNode(stats);
         if (head == null) {
@@ -35,10 +39,20 @@ public class StatList {
         size ++;
     }
     
+    /**
+     * 
+     * @return the size of the StatList
+     */
     public int getSize() {
         return size;
     }
     
+    /**
+     * finds the average stat for the team for a specified stat type
+     * 
+     * @param statName name of stat
+     * @return total stats under that name
+     */
     public double averageStat(String statName) {
         if (size == 0) { return 0.0; }
 
@@ -73,11 +87,17 @@ public class StatList {
         return total/size;
     }
 
-
+    /**
+     * returns all games in a certain period
+     * 
+     * @param start first game
+     * @param end last game
+     * @return all games within this time period
+     */
     public List<GameStats> getGamesInPeriod(int start, int end) {
         List<GameStats> result = new ArrayList<>();
+        
         StatNode current = head;
-
         while (current != null) {
             if (current.stats.getGameNumber() >= start && 
                 current.stats.getGameNumber() <= end) {
@@ -85,7 +105,6 @@ public class StatList {
             }
             current = current.next;
         }
-
         return result;
     }
     

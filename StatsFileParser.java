@@ -19,15 +19,12 @@ public class StatsFileParser {
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
                 
-                // Handle empty lines or malformed data
-                if (values.length < 2) continue;
-                
                 // Check if this is a game header line (e.g., "1,,,,,,,")
-                if (values[1].trim().isEmpty()) {
+                if (values[0].trim().equals("**Game 1**")) {
                     currentGame = Integer.parseInt(values[0].trim());
                     continue;
                 }
-                
+
                 // Check if this is a point header line (e.g., "1,1,,,,,,,0")
                 if (values[1].matches("\\d+") && values[2].trim().isEmpty()) {
                     currentPoint = Integer.parseInt(values[1].trim());
@@ -35,6 +32,7 @@ public class StatsFileParser {
                 }
                 
                 // This must be a player stats line
+                currentGame = Integer.parseInt(values[0].trim());
                 String playerName = values[1].trim();
                 boolean startedOnOffense = Integer.parseInt(values[2].trim()) == 1;
                 int uncompletedThrows = parseIntWithDefault(values[3].trim(), 0);

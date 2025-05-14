@@ -11,37 +11,69 @@ public class FrisbeeStatsAnalyzer {
 
     }
 
-    private int calculateTotalGames() {
+    /**
+     * Made to calculate the total games that were played
+     * 
+     * @return total number of games played
+     */
+    int calculateTotalGames() {
         int maxGame = 0;
         for (StatList stats : playerStats.values()) {
-            // Assuming the last game in any player's list is the total
+            // assuming the last game in any player's list is the total, iterates through the stats.
             if (stats.getSize() > 0) {
-                GameStats lastGame = stats.getGamesInPeriod(0, Integer.MAX_VALUE).get(stats.getSize() - 1);
+                GameStats lastGame = stats.getGamesInPeriod(0, stats.getSize() - 1).get(maxGame);
                 maxGame = Math.max(maxGame, lastGame.getGameNumber());
             }
         }
         return maxGame;
     }
 
+    /**
+     * Finds the total stat of a certain stat for a specified player
+     * 
+     * @param playerName name of a player
+     * @param statName the stat to be analyzed
+     * @return
+     */
     double averagePlayerStat (String playerName, String statName) {
+        
+        // if the players name is not in the map, throws an exception
         if (!playerStats.containsKey(playerName)) {
             throw new IllegalArgumentException("Player not found: " + playerName);
         }
+
+        // gets the players average stat using the averageStat function from GameStats
         return playerStats.get(playerName).averageStat(statName);
     }
 
     public Map<String, Double> calculateTeamTrends(String statName, int lastNGames) {
         Map<String, Double> trends = new HashMap<>();
+        
+        if (playerStats.isEmpty() || lastNGames <= 0) {
+            return trends; // Return empty for invalid inputs
+        }
+        
         int startGame = Math.max(1, totalGames - lastNGames + 1);
         
         for (Map.Entry<String, StatList> entry : playerStats.entrySet()) {
             List<GameStats> recentGames = entry.getValue().getGamesInPeriod(startGame, totalGames);
+            
             if (!recentGames.isEmpty()) {
                 double sum = 0.0;
+                int count = 0;
+                
                 for (GameStats game : recentGames) {
-                    sum += getStatValue(game, statName);
+                    try {
+                        sum += getStatValue(game, statName);
+                        count++;
+                    } catch (IllegalArgumentException e) {
+                        System.err.println("Invalid stat for " + entry.getKey() + ": " + e.getMessage());
+                    }
                 }
-                trends.put(entry.getKey(), sum / recentGames.size());
+                
+                if (count > 0) {
+                    trends.put(entry.getKey(), sum / count);
+                }
             }
         }
         
@@ -88,6 +120,14 @@ public class FrisbeeStatsAnalyzer {
             case "plusminus": return game.getPlusMinus();
             default: throw new IllegalArgumentException("Unknown stat: " + statName);
         }
+    }
+
+    public Map<String, StatList> getPlayerStats() {
+        return playerStats;
+    }
+    
+    public int getTotalGames() {
+        return totalGames;
     }
 
 
