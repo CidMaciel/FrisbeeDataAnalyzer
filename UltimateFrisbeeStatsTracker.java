@@ -2,6 +2,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * This class allows for the user to do live stat recording for ultimate frisbee games.
+ * 
+ * @author Emmett Levine
+ * @author Cid Maciel
+ */
+
 public class UltimateFrisbeeStatsTracker {
     private List<List<String>> pointLineups = new ArrayList<>();
     private List<Map<String, Map<Character, Integer>>> pointPlayerStats = new ArrayList<>(); 
@@ -28,6 +35,11 @@ public class UltimateFrisbeeStatsTracker {
     private List<String> currentPointPlayers;
     private List<String> currentPointStatTypes;
 
+
+/**
+ * Initializes all trackers, variables, structures
+ */
+
     public UltimateFrisbeeStatsTracker() {
         scanner = new Scanner(System.in);
         playerStats = new HashMap<>();
@@ -45,6 +57,10 @@ public class UltimateFrisbeeStatsTracker {
         isGameOver = false;
     }
 
+/**
+ * Sets stat counters to 0.
+ */
+
     private void initializeTeamStats() {
         teamStats.put("completedCatches", 0);
         teamStats.put("droppedCatches", 0);
@@ -54,6 +70,12 @@ public class UltimateFrisbeeStatsTracker {
         teamStats.put("assists", 0);
         teamStats.put("scores", 0);
     }
+
+
+/**
+ * Starts to run the code; prompts for rosters, game details, and enters gameplay loop, 
+ * includes gameplay control, halftime, game end, and CSV export
+ */
 
     public void startGame() {
         System.out.println("\n\nWelcome to Ultimate Frisbee Stats Tracker! Good luck in the game!");
@@ -88,6 +110,11 @@ public class UltimateFrisbeeStatsTracker {
             }
         }
     }
+
+/**
+ * Records the game roster from user input
+ */
+
     private void enterPlayersForGame() {
         System.out.println("\nEnter the players for this game, separated by comma:");
         String input = scanner.nextLine();
@@ -104,6 +131,10 @@ public class UltimateFrisbeeStatsTracker {
             }
         }
     }
+
+  /**
+ * Lets the user add or remove players before the game starts
+ */  
     
     private void editRoster() {
         while (true) {
@@ -164,6 +195,9 @@ public class UltimateFrisbeeStatsTracker {
         }
     }
     
+/**
+ * Collects the rest of the game details, such as date, opponent, and offense/defense
+ */
 
     private void enterGameDetails() {
 
@@ -198,6 +232,11 @@ public class UltimateFrisbeeStatsTracker {
         }
         System.out.println("Starting on " + startingPosition);        
     }
+
+/**
+ * Manages the logic for each point. Tracks actions, allows substitutions and edits,
+ * stores results, and handles end-of-game scenarios.
+ */
 
     private void playPoint() {
         //clears currents to prepare for point
@@ -293,7 +332,11 @@ public class UltimateFrisbeeStatsTracker {
             }
             }
         }
-    }   
+    }
+    
+/**
+ * Saves player stats from the current point for later export
+ */
 
     private void storePointStats() {
         Map<String, Map<Character, Integer>> playerPointStats = new HashMap<>();
@@ -325,6 +368,12 @@ public class UltimateFrisbeeStatsTracker {
     //store stats from this point in the larger pointPlayerStats
     pointPlayerStats.add(playerPointStats);
     }
+
+/**
+ * Updates player stats for a specific point after edits
+ * 
+ * @param pointIndex The index of the point to update
+ */
     
     private void updatePointStats(int pointIndex){
         //if pointIndex in bounds, update temporary updatedStats hashmap 
@@ -351,6 +400,10 @@ public class UltimateFrisbeeStatsTracker {
         pointPlayerStats.set(pointIndex, updatedStats);
         }
     }
+
+/**
+ * Prompts the user to enter the lineup for the current point and validates it
+ */ 
 
     private void getLineForPoint() {
         System.out.println("Enter the players on this line, separated by comma:");
@@ -394,6 +447,10 @@ public class UltimateFrisbeeStatsTracker {
         }
     }
     
+/**
+ * Allows the user to replace a player on the line mid-point.
+ */
+
     private void makeSubstitution() {
         System.out.println("Enter player number to substitute (1-" + currentLine.size() + "):");
         int playerNumber = Integer.parseInt(scanner.nextLine().trim());
@@ -424,6 +481,13 @@ public class UltimateFrisbeeStatsTracker {
             System.out.println("Substitute player not found on roster.");
         }
     }
+
+
+ /**
+ * Adds an action for a player during the point
+ * 
+ * @param input 2-char string of player number and action code (ex. "1c")
+ */
 
     private void recordAction(String input) {
         //if more than 2 characters, invalid
@@ -464,6 +528,13 @@ public class UltimateFrisbeeStatsTracker {
         }
     }
 
+    /**
+ * Maps the given action code to a full description (e.g., 'c' → "Completed Catch")
+ * 
+ * @param action Action code character
+ * @return A string description of the action, or null if invalid
+ */
+
     private String getActionDescription(char action) {
         switch (action) {
             case 'd': return "Dropped Catch";
@@ -476,6 +547,10 @@ public class UltimateFrisbeeStatsTracker {
             default: return null;
         }
     }
+
+/**
+ * Updates team and player stats after a point ends
+ */
 
     private void processPointActions() {
         //process all actions for this point and update player and team stats
@@ -491,6 +566,12 @@ public class UltimateFrisbeeStatsTracker {
             playerStats.get(player).add(statNode);
         }
     }
+
+/**
+ * Adds to team stat totals based on the action type
+ * 
+ * @param actionType The character representing the action (e.g., 'c', 't')
+ */
 
     private void updateTeamStats(String actionType) {
         switch (actionType.charAt(0)) {
@@ -522,6 +603,10 @@ public class UltimateFrisbeeStatsTracker {
         }
     }
 
+/**
+ * Allows the user to insert or delete actions from the point after it's over
+ */
+
     private void alterPointActions() {
         System.out.println("\nCurrent point actions:");
         //print out all of the actions from the point in order
@@ -540,6 +625,10 @@ public class UltimateFrisbeeStatsTracker {
     
     }
     
+/**
+ * Inserts an action into the current point if it was missed
+ */
+
     private void insertAction() {
         System.out.println("Enter action number to insert after (0 for beginning):");
         int insertPoint = Integer.parseInt(scanner.nextLine().trim());
@@ -589,6 +678,10 @@ public class UltimateFrisbeeStatsTracker {
         }
     }
     
+/**
+ * Deletes an action from the current point if it was entered by accident
+ */
+
     private void deleteAction() {
         System.out.println("Enter action number to delete:");
         int actionIndex = Integer.parseInt(scanner.nextLine().trim()) - 1;
@@ -607,41 +700,10 @@ public class UltimateFrisbeeStatsTracker {
             System.out.println("Invalid action number.");
         }
     }
-    
-    private void updateAction(int actionIndex, String newAction) {
-        if (newAction.length() != 2) {
-            System.out.println("Invalid input. Please use format 'player#' 'action', ex. '1f' or '2c', as described in the readme");
-            return;
-        }
-        
-        try {
-            int playerIndex = Character.getNumericValue(newAction.charAt(0)) - 1;
-            char action = newAction.charAt(1);
-            //if playerIndex given by user is out of bounds, invalid
-            if (playerIndex < 0 || playerIndex >= currentLine.size()) {
-                System.out.println("Invalid player number.");
-                return;
-            }
-            //now that we checked index for validity, set playerName and actionDescription
-            String playerName = currentLine.get(playerIndex);
-            String actionDescription = getActionDescription(action);
-            
-            
-            // update action in actions, players, and stats
-            currentPointActions.set(actionIndex, actionDescription);
-            currentPointPlayers.set(actionIndex, playerName);
-            currentPointStatTypes.set(actionIndex, String.valueOf(action));
-            
-            System.out.println("\nUpdated point actions:");
-            // display points' actions including new actions
-            for (int i = 0; i < currentPointActions.size(); i++) {
-                System.out.println((i + 1) + ". " + currentPointPlayers.get(i) + " " + currentPointActions.get(i));
-            }
-            
-        } catch (Exception e) {
-            System.out.println("Error updating action: " + e.getMessage());
-        }
-    }
+
+/**
+ * Prints score and team stats at halftime
+ */
 
     private void displayHalftimeStats() {
         System.out.println("\n----- Halftime Stats -----");
@@ -649,10 +711,18 @@ public class UltimateFrisbeeStatsTracker {
         displayTeamStats();
     }
 
+/**
+ * Prints score and team stats at the end of the game
+ */
+
     private void displayFinalStats() {
         System.out.println("\n----- Final Game Stats -----");
         displayTeamStats();
     }
+
+/**
+ * Prints individual stats for each player
+ */
 
     private void displayFullPlayerStats() {
         System.out.println("\n----- Full Player Stats -----");
@@ -682,6 +752,10 @@ public class UltimateFrisbeeStatsTracker {
     }
     
 
+/**
+ * Calculates and prints player ratings based on weighted stats
+ */
+
     private void displayPlayerRatings() {
         System.out.println("\nPlayer Ratings:");
         //for all players, retrieve stats per player from playerStats HashMap, then calculate and print their player ratings one at a time
@@ -698,6 +772,10 @@ public class UltimateFrisbeeStatsTracker {
         System.out.println(nameMapping.get(player) + " rating: " + rating);
     }
 }
+
+/**
+ * Prints aggregated team statistics including completion rates
+ */
 
     private void displayTeamStats() {
         System.out.println("Team Stats:");
@@ -731,6 +809,11 @@ public class UltimateFrisbeeStatsTracker {
         System.out.println("Catch Completion Rate: " + catchCompletionRate + "%");
 
     }
+
+/**
+ * Exports game data to a CSV file in the format:
+ * Braineatersvs[Opponent]_[Date].csv
+ */
 
     private void exportStatsToCSV() {
         try {
@@ -786,12 +869,15 @@ public class UltimateFrisbeeStatsTracker {
     }
 }
         
-            
 
     public static void main(String[] args) {
         UltimateFrisbeeStatsTracker tracker = new UltimateFrisbeeStatsTracker();
         tracker.startGame();
     }
+
+/**
+ * Node representing one action performed by a player
+ */
 
     class StatNode {
         //stores type of stat, represented by the characters
@@ -810,6 +896,11 @@ public class UltimateFrisbeeStatsTracker {
             return statType;
         }
     }
+
+/**
+ * Doubly-linked list comprised of StatNodes for each player,
+ * used to store and analyze player stat history
+ */
     
     class DoublyLinkedList {
         private StatNode head;
