@@ -229,5 +229,27 @@ if (values[0].trim().equals("**Game 1**")) {
                     continue;
                 }
 
+# PlayerImpact class
+
+This class is a custom class made to store the name and impact of players when they are being calculated into the impactfulness line. It takes two inputs, a name and impact, and returns nothing
+
+## getName method
+
+Returns the name of the player 
+
+### Example Usage:
+
+player.getName() = "Rook"
+
+## getImpact method
+
+Returns the impact of the player
+
+### Example Usage:
+
+player.getImpact() = 2
+
+
+
 
 
