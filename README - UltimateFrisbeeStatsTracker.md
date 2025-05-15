@@ -262,33 +262,133 @@ I hope that this brief overview paints a picture of what you can do with this pr
 
 ## API
 
-### Constructor
+### `UltimateFrisbeeStatsTracker()`
+Initializes all trackers, variables, structures
+Input: None
+Output: None
 
-```
-UltimateFrisbeeStatsTracker tracker = new UltimateFrisbeeStatsTracker();
-```
-Creates a new instance of the game tracker.
+### `initializeTeamStats()`
+Sets stat counters to 0
+Input: None
+Output: None
 
 ### `startGame()`
+Starts to run the code; prompts for rosters, game details, and enters gameplay loop
+Input: user input via scanner
+Output: printed stats at end of game, csv export if user desires
 
-```
-tracker.startGame();
-```
-Starts the interactive terminal session. Prompts for rosters, game details, and enters gameplay loop.
+### `enterPlayersForGame()`
+Records the game roster from user
+Input: string of players in game, given by user
+Output: populates players, nameMapping, and playerStats
+
+### `editRoster()`
+Lets the user add or remove players before the game start
+Input: add, remove, or done, based on user input
+Output: updated player list, nameMapping, and playerStats
+
+### `enterGameDetails()`
+Collects the rest of the game details, such as date, opponent, and offense/defense from user
+Input: user-inputted strings for those various details
+Output: game settings initialized
+
+### `playPoint()`
+Manages the logic for each point, housing the ability to have the user tracking actions, make substitutions, edit actions, while also housing the storage and end of game scenarios; many methods and user interactions run through this method
+Input: player actions and point result or subs by user inputt
+Output: updated game state and stored point stats
+
+### `getLineForPoint()`
+Prompts for user to record the players who will play on the point and validates the entries against the aforegiven roster
+Input: user input through scanner of players on line
+Output: updates currentLine
+
+
+### `makeSubstitution()`
+Allows user to replace a player on the line in the middle of a point.
+Input: user-dictated player number to replace and sub name
+Output: updates currentLine
+
 
 ### `recordAction(String input)`
 
 Adds an action for a player during the point.
+Input: user gives a 2-char string (assigned player number plus action code)
+Output: updates action lists
 
-### `makeSubstitution()`
+### `getActionDescription(char action)`
+Maps the give action code to it's full correlated value so that the user can read it back
+Input: char representing action code
+Output: updates action lists
 
-Substitutes a player on the field.
+### `alterPointActions()`
+Allows user to insert or delete actions from the point after the point
+Input: user string of insert or delete
+Output: updates action lists
 
-### `exportStatsToCSV()`
+### `insertAction()`
+Inserts an action after the point if it was missed
+Input: user inputs where the action should go and the new action code
+Output: updates action lists
 
-Exports game data to `Braineatersvs[Opponent]_[Date].csv`.
+### `deleteAction()`
+Deletes an action after the point if it was add by accident
+Input: user inputs which action should be deleted by index
+Output: updates action lists
 
+### `processPointActions()`
+Updates team and player stats after point ends
+Input: none
+Output: updates teamStats, playerStats
+
+### `updateTeamStats(String actionType)`
+Add to team stat totals
+Input: char of action code
+Output: updates teamStats
+
+### `storePointStats()`
+Saves stats from points to be used for exporting to CSV
+Input: none
+Output: updates pointPlayerStats
+
+### `updatePointStats(int pointIndex)`
+Updates player stats in a point after edits of insertion and deletion
+Input: index in pointPlayerStats based on index of insertion or deletion of point
+Output: updates pointPlayerStats
+
+### `displayHalftimeStats()`
+Prints score and team stats at halftime
+Input: none
+Output: print for user to observe
+
+### `displayFinalStats()`
+Prints score and team stats at final time
+Input: none
+Output: print for user to observe
+
+### `displayFullPlayerStats()`
+Prints individual player stats
+Input: none
+Output: print for user to observe
 
 ### `displayPlayerRatings()`
+Prints player ratings based on weighted calculation of recorded actions by player
+Input: none
+Output: print for user to observe
 
-Shows a calculated performance score per player.
+### `displayTeamStats()`
+Prints team aggregated stats
+Input: none
+Output: print for user to observe
+
+### `exportStatsToCSV()`
+Exports game data to `Braineatersvs[Opponent]_[Date].csv`.
+Input: none
+Output: csv file
+
+### `StatNode`
+node representing one action performed by a player
+
+### `DoublyLinkedList`
+comprised of StatNodes for each player
+
+

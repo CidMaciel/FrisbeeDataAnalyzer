@@ -170,7 +170,7 @@ public class UltimateFrisbeeStatsTracker {
         System.out.println("\nWhat is today's date? Please enter in M-D-Y form, ex. 09-20-2004; nothing besides the digits and hypens please!:");
         dateOfGame = scanner.nextLine().trim();
 
-        System.out.println("\nEnter the name of the opposing team:");
+        System.out.println("\nEnter the name of the opposing team (no spaces please!):");
         opposingTeam = scanner.nextLine().trim();
         
         System.out.println("\nGame to 13 or 15?");
@@ -529,28 +529,15 @@ public class UltimateFrisbeeStatsTracker {
             System.out.println((i + 1) + ". " + currentPointPlayers.get(i) + " " + currentPointActions.get(i));
         }
         
-        System.out.println("\nEnter action number to alter, or 'i' to insert an action, or 'd' to delete an action:");
+        System.out.println("\nEnter 'i' to insert an action or 'd' to delete an action:");
         String input = scanner.nextLine().trim();
         
         if (input.equalsIgnoreCase("i")) {
             insertAction();
-        } else if (input.equalsIgnoreCase("d")) {
-            deleteAction();
         } else {
-            try {
-                int actionIndex = Integer.parseInt(input) - 1;
-                //if action index is in bounds, ask user for new action and update index with new action
-                if (actionIndex >= 0 && actionIndex < currentPointActions.size()) {
-                    System.out.println("Enter new action for " + currentPointPlayers.get(actionIndex) + ":");
-                    String newAction = scanner.nextLine().trim();
-                    updateAction(actionIndex, newAction);
-                } else {
-                    System.out.println("Invalid action number");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input");
-            }
+            deleteAction();
         }
+    
     }
     
     private void insertAction() {
