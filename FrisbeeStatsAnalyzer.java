@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
  * class that analyzes the stats of frisbee players
  * @Author Cid Maciel and Emmett Levine
  */
-public class FrisbeeStatsAnalyzer {
+public class FrisbeeStatsAnalyzer implements PlayerStatsManager{
     private final Map<String, StatList> playerStats;
     private int totalGames;
 
@@ -46,13 +46,13 @@ public class FrisbeeStatsAnalyzer {
      * @param statName the stat to be analyzed
      * @return
      */
-    double averagePlayerStat (String playerName, String statName) {
-        
+    public double averagePlayerStat (String playerName, String statName) {
+            
         // if the players name is not in the map, throws an exception
         if (!playerStats.containsKey(playerName)) {
             throw new IllegalArgumentException("Player not found: " + playerName);
         }
-
+    
         // gets the players average stat using the averageStat function from GameStats
         return playerStats.get(playerName).averageStat(statName);
     }
@@ -209,7 +209,7 @@ public class FrisbeeStatsAnalyzer {
      * @param statName name of stat
      * @return
      */
-    private double getStatValue(GameStats game, String statName) {
+    public double getStatValue(GameStats game, String statName) {
         switch (statName.toLowerCase()) {
             case "completed throws": return game.getCompletedThrows();
             case "uncompleted throws": return game.getUncompletedThrows();
