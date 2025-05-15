@@ -250,6 +250,9 @@ Returns the impact of the player
 player.getImpact() = 2
 
 
+# To access the readme for UltimateFrisbeeStatsTracker, look above in the repository.
+
+
 
 
 
