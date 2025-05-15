@@ -1,6 +1,6 @@
 import java.io.IOException;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -13,7 +13,7 @@ public class Main {
         try {
             // Load data
             System.out.println("Loading player stats data...");
-            Map<String, StatList> playerStats = StatsFileParser.parseFile("data/Rook_Snooze_Full_Data.csv");
+            Map<String, StatList> playerStats = StatsFileParser.parseFile("data/BraineatersvsKaiMawhinney_yomama.csv");
             FrisbeeStatsAnalyzer analyzer = new FrisbeeStatsAnalyzer(playerStats);
             
             // Main menu loop

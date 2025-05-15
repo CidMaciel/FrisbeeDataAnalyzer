@@ -14,7 +14,11 @@ And here is the result when you select 1 and choose drops:
 
 ## Usage
 
-There are several methods within the FrisbeeDataAnalyzer project. I will begin by going over GameStats, the class in which we store the stats for each individual player
+There are several methods within the FrisbeeDataAnalyzer project. I will begin by going over GameStats, the class in which we store the stats for each individual player.
+
+# Main class
+
+### The main class is where all code should be run. If you run the main class, this will show you the options for analyzing each player and stats.
 
 # GameStats class
 
@@ -66,7 +70,7 @@ playerStats.addGame(new GameStats("Rook", 1, 3, true, 0, 5, 3, 1, 2, true));
 
 ## averageStat method
 
-This method takes one input, which is the average stat you want to find. It then searches through the StatList for each stat that matches, and adds them to the double value that is returned. It also throws an error if an unsupported stat name is inputted
+This method takes one input, which is the average stat you want to find. It then searches through the StatList for each stat that matches, and adds them to the double value that is returned. It also throws an error if an unsupported stat name is inputted.
 
 ### Example Usage:
 

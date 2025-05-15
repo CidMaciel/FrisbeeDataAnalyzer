@@ -167,10 +167,10 @@ public class UltimateFrisbeeStatsTracker {
 
     private void enterGameDetails() {
 
-        System.out.println("\nWhat is today's date? Please enter in M/D/Y form, ex. 09/20/2004:");
+        System.out.println("\nWhat is today's date? Please enter in M-D-Y form, ex. 09-20-2004; nothing besides the digits and hypens please!:");
         dateOfGame = scanner.nextLine().trim();
 
-        System.out.println("\nEnter the name of the opposing team:");
+        System.out.println("\nEnter the name of the opposing team (no spaces please!):");
         opposingTeam = scanner.nextLine().trim();
         
         System.out.println("\nGame to 13 or 15?");
@@ -529,28 +529,15 @@ public class UltimateFrisbeeStatsTracker {
             System.out.println((i + 1) + ". " + currentPointPlayers.get(i) + " " + currentPointActions.get(i));
         }
         
-        System.out.println("\nEnter action number to alter, or 'i' to insert an action, or 'd' to delete an action:");
+        System.out.println("\nEnter 'i' to insert an action or 'd' to delete an action:");
         String input = scanner.nextLine().trim();
         
         if (input.equalsIgnoreCase("i")) {
             insertAction();
-        } else if (input.equalsIgnoreCase("d")) {
-            deleteAction();
         } else {
-            try {
-                int actionIndex = Integer.parseInt(input) - 1;
-                //if action index is in bounds, ask user for new action and update index with new action
-                if (actionIndex >= 0 && actionIndex < currentPointActions.size()) {
-                    System.out.println("Enter new action for " + currentPointPlayers.get(actionIndex) + ":");
-                    String newAction = scanner.nextLine().trim();
-                    updateAction(actionIndex, newAction);
-                } else {
-                    System.out.println("Invalid action number");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input");
-            }
+            deleteAction();
         }
+    
     }
     
     private void insertAction() {
@@ -751,7 +738,7 @@ public class UltimateFrisbeeStatsTracker {
             FileWriter fileWriterStatsToCSV = new FileWriter(filename);
 
             //title line which designates the categories of recorded data
-            fileWriterStatsToCSV.append("Point in Game by Player,\"Started on offense/defense (O = 1, D = 0)\",# of Uncompleted Throws,# of Completed Throws,# of Catches,# of Drops (hits body but not completed catch) ,# of Forced Ds (stalled out opponent or block), # of Assists, # of Scores,\"Line won (T = 1, F = 0)\"\n");
+            fileWriterStatsToCSV.append("Game Number,Point in Game by Player,\"Started on offense/defense (O = 1, D = 0)\",# of Uncompleted Throws,# of Completed Throws,# of Catches,# of Drops (hits body but not completed catch) ,# of Forced Ds (stalled out opponent or block),\"Line won (T = 1, F = 0)\"\n");
 
             //for each point in the game, retrieve pointWon, startedOnOffense, players, and stats
             for (int pointIndex = 0; pointIndex < pointResults.size(); pointIndex++) {
@@ -761,8 +748,9 @@ public class UltimateFrisbeeStatsTracker {
             Map<String, Map<Character, Integer>> pointStats = pointPlayerStats.get(pointIndex);
             
             //write which point it is and if we won the point in the left and rightmost columns, respectively
+            fileWriterStatsToCSV.append("0,");
             fileWriterStatsToCSV.append(String.valueOf(pointIndex + 1));
-            fileWriterStatsToCSV.append(",,,,,,,,," + (pointWon ? "1" : "0") + "\n");
+            fileWriterStatsToCSV.append(",,,,,,," + (pointWon ? "1" : "0") + "\n");
             
             // Write player rows for this point
             for (String player : lineup) {
@@ -771,11 +759,12 @@ public class UltimateFrisbeeStatsTracker {
                 if (stats == null) {
                     // If no stats for this player (should not happen), use empty stats
                     stats = new HashMap<>();
-                    for (char c : new char[]{'c', 'd', 't', 'u', 'f', 'a', 's'}) {
+                    for (char c : new char[]{'c', 'd', 't', 'u', 'f'}) {
                         stats.put(c, 0);
                     }
                 }
                 //add each player's stat across the row for their point
+                fileWriterStatsToCSV.append("0,");
                 fileWriterStatsToCSV.append(nameMapping.get(player) + ",");
                 fileWriterStatsToCSV.append(startedOnOffense ? "1," : "0,");
                 fileWriterStatsToCSV.append(stats.getOrDefault('u', 0) + ",");
@@ -783,14 +772,10 @@ public class UltimateFrisbeeStatsTracker {
                 fileWriterStatsToCSV.append((stats.getOrDefault('c', 0) + stats.getOrDefault('s', 0)) + ",");
                 fileWriterStatsToCSV.append(stats.getOrDefault('d', 0) + ",");
                 fileWriterStatsToCSV.append(stats.getOrDefault('f', 0) + ",");
-                fileWriterStatsToCSV.append(stats.getOrDefault('a', 0) + ",");
-                fileWriterStatsToCSV.append(stats.getOrDefault('s', 0) + ",");
+       
                 fileWriterStatsToCSV.append((pointWon ? "1" : "0") + "\n");
             }
         }
-        
-        // Add one blank row at the end
-        fileWriterStatsToCSV.append(",,,,,,,\n");
         
         fileWriterStatsToCSV.close();
         
