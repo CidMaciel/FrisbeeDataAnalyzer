@@ -1,0 +1,17 @@
+Game Number,Point in Game by Player,"Started on offense/defense (O = 1, D = 0)",# of Uncompleted Throws,# of Completed Throws,# of Catches,# of Drops (hits body but not completed catch) ,# of Forced Ds (stalled out opponent or block),"Line won (T = 1, F = 0)"
+0,1,,,,,,,1
+0,Snooze,0,0,1,0,0,0,1
+0,Rook,0,0,0,1,0,0,1
+0,Prof Li,0,0,1,1,0,0,1
+0,Prof Osborne,0,0,0,0,0,0,1
+0,Prof Ye,0,0,0,0,0,0,1
+0,Prof Papoutsaki,0,0,1,1,0,0,1
+0,Prof Clark,0,0,0,0,0,0,1
+0,2,,,,,,,0
+0,Prof Papoutsaki,0,0,1,0,0,0,0
+0,Prof Clark,0,2,0,2,0,0,0
+0,Prof Kauchak,0,0,0,0,0,0,0
+0,Prof Birrell,0,0,0,0,0,0,0
+0,Prof DesCombes,0,0,0,0,0,0,0
+0,Prof Wilson,0,0,0,0,1,0,0
+0,Prof Wu,0,0,1,0,1,0,0
