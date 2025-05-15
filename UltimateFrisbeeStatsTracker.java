@@ -262,7 +262,7 @@ public class UltimateFrisbeeStatsTracker {
         
         // prompt for us as we lead into the next point; allows for continuation to next point, altering of stats from current point, or indicating that game is over early
         boolean readyForNextPoint = false;
-        while (!readyForNextPoint || !isGameOver) {
+        while (!readyForNextPoint && !isGameOver) {
             System.out.println("\nEnter 1 if ready for next point; enter 2 if need to alter this point; enter 'game over' if the game is over.");
             String choice = scanner.nextLine().trim();
 
