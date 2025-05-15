@@ -34,7 +34,7 @@ As an example of input, one of the lines of stats of a player that could be read
 
 ## calculatePlusMinus
 
-calculatePlusMinus takes no inputs. It is called within each player, and calculates the plus minus of a player by adding their completed throws, catches, and forced ds, and subtracts their drops and uncompleted throws. This method will return an Integer value that is uqual to the player's plus minus.
+calculatePlusMinus takes no inputs. It is called within each player, and calculates the plus minus of a player by adding their completed throws, catches, and forced ds, and subtracts their drops and uncompleted throws. This method will return an Integer value that is equal to the player's plus minus.
 
 ### Example Usage:
 
