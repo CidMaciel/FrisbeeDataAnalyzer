@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 /**
  * Interactive Ultimate Frisbee Stats Analyzer
+ * @Author Cid Maciel and Emmett Levine
  */
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
@@ -13,7 +14,7 @@ public class Main {
         try {
             // Load data
             System.out.println("Loading player stats data...");
-            Map<String, StatList> playerStats = StatsFileParser.parseFile("data/BraineatersvsKaiMawhinney_yomama.csv");
+            Map<String, StatList> playerStats = StatsFileParser.parseFile("data/Rook_Snooze_Full_Data.csv");
             FrisbeeStatsAnalyzer analyzer = new FrisbeeStatsAnalyzer(playerStats);
             
             // Main menu loop
@@ -55,6 +56,11 @@ public class Main {
         }
     }
     
+    /**
+     * utilizes the averagePlayerStat to find player stats
+     * 
+     * @param analyzer
+     */
     private static void analyzePlayerAverages(FrisbeeStatsAnalyzer analyzer) {
         System.out.println("\n=== Player Averages ===");
         System.out.println("Available stats: completed throws, uncompleted throws, catches, drops, forced ds, plusminus");
@@ -62,12 +68,19 @@ public class Main {
         String stat = scanner.nextLine().toLowerCase();
         
         System.out.println("\nResults:");
+
+        // iterates through the stats and prints each player's average
         for (String player : analyzer.getPlayerStats().keySet()) {
             double avg = analyzer.averagePlayerStat(player, stat);
             System.out.printf("%s: %.2f %s%n", player, avg, stat);
         }
     }
     
+    /**
+     * utilizes the calculateTeamTrends method to find the team trends
+     * 
+     * @param analyzer
+     */
     private static void analyzeTeamTrends(FrisbeeStatsAnalyzer analyzer) {
         System.out.println("\n=== Team Trends ===");
         System.out.println("Available stats: completed throws, uncompleted throws, catches, drops, forced ds, plusminus");
@@ -75,25 +88,43 @@ public class Main {
         String stat = scanner.nextLine().toLowerCase();
         
         System.out.print("Enter number of recent games to consider (max 2): ");
-        int games = getIntInput(1, analyzer.getTotalGames());
+        int games = getIntInput(1, 2);
         
-        System.out.println("\nResults (last 2 games):");
+        // finds the results for the last one or two games
+        System.out.println("\nResults (last" + games + " games):");
         Map<String, Double> trends = analyzer.calculateTeamTrends(stat, games);
         trends.forEach((player, avg) -> System.out.printf("%s: %.2f %s%n", player, avg, stat));
     }
     
+    /**
+     * uses the calculateAllPlusMinus method to find team plus minuses
+     * 
+     * @param analyzer
+     */
     private static void viewPlusMinus(FrisbeeStatsAnalyzer analyzer) {
         System.out.println("\n=== Player Plus-Minus Ratings ===");
+
+        // calculates each plus minus and prints them
         Map<String, Integer> plusMinus = analyzer.calculateAllPlusMinus();
         plusMinus.forEach((player, pm) -> System.out.printf("%s: %+d%n", player, pm));
     }
 
+    /**
+     * uses the recommendLines method to recommend a new line
+     * 
+     * @param analyzer
+     */
     private static void suggestNewLine(FrisbeeStatsAnalyzer analyzer) {
         System.out.println("\n=== New Suggested O and D Lines  ===");
         Map<String, List<String>> playerList = analyzer.recommendLines(7);
         System.out.println(playerList);
     }
     
+    /**
+     * uses getMostImpactfulPlayers to get the most impactful players in a specified range
+     * 
+     * @param analyzer
+     */
     private static void findImpactfulPlayers(FrisbeeStatsAnalyzer analyzer) {
         System.out.println("\n=== Most Impactful Players ===");
         System.out.print("Enter minimum games played: ");
