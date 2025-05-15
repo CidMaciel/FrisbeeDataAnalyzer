@@ -3,6 +3,7 @@ import java.util.Map;
 
 /**
  * interface for managing and analyzing Ultimate Frisbee player statistics
+ * @Author Cid Maciel and Emmett Levine
  */
 public interface PlayerStatsManager {
     
